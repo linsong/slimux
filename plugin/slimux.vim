@@ -209,7 +209,12 @@ function! s:Send(tmux_packet)
       endif
 
       let named_buffer = s:tmux_version >= '2.0' ? '-b Slimux' : ''
-      call system('tmux load-buffer ' . named_buffer . ' -', text)
+
+      let temp = tempname()
+      call writefile(split(text, "\r", 1), temp)
+      call system('tmux load-buffer ' . named_buffer . ' ' . temp)
+    " call system('tmux load-buffer ' . named_buffer . ' -', text)
+    
       call system('tmux paste-buffer ' . named_buffer . ' -t ' . target)
 
       if type == "code"
